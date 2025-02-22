@@ -15,35 +15,35 @@ function Header() {
                 <div className="flex items-center mb-6 p-2">
                     <img src={logo} alt="AQVO Logo" className="h-10 mr-2" />
                 </div>
-                <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-                    <ul class="space-y-2 font-medium">
+                <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+                    <ul className="space-y-2 font-medium">
                         <li>
-                            <Link to={"/statistika"} class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                            <Link to={"/statistika"} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <FcStatistics />
-                                <span class="ms-3">Statistika</span>
+                                <span className="ms-3">Statistika</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to={"/ombor"} class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                            <Link to={"/ombor"} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <PiStorefrontFill />
-                                <span class="flex-1 ms-3 whitespace-nowrap">Ombor</span>
+                                <span className="flex-1 ms-3 whitespace-nowrap">Ombor</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to={"/magazinlar"} class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                            <Link to={"/magazinlar"} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <IoStorefrontOutline />
-                                <span class="flex-1 ms-3 whitespace-nowrap">Magazinlar</span>
+                                <span className="flex-1 ms-3 whitespace-nowrap">Magazinlar</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to={"/hodimlar"} class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                            <Link to={"/hodimlar"} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <IoMdPeople />
-                                <span class="flex-1 ms-3 whitespace-nowrap">Hodimlar</span>
+                                <span className="flex-1 ms-3 whitespace-nowrap">Hodimlar</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to={"/tayormaxsultolar"} class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                                <span class="flex-1 ms-3 whitespace-nowrap">Tayor Maxsultolar</span>
+                            <Link to={"/tayormaxsultolar"} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                                <span className="flex-1 ms-3 whitespace-nowrap">Tayor Maxsultolar</span>
                             </Link>
                         </li>
                     </ul>
