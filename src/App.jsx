@@ -34,7 +34,7 @@ function App() {
           element: <Hodimlar />
         },
         {
-          path: '/tayormaxsultolar',
+          path: '/tayormaxsulotlar',
           element: <TayorMaxsultolar />
         }
       ]
