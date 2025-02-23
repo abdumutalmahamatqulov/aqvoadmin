@@ -51,10 +51,10 @@ const Magazinlar = () => {
       .post(`${BACKEND_URL}/api/stores`, newStore)
       .then((response) => {
         console.log("Yangi magazin qo‘shildi:", response.data);
-        setData([...data, response.data]); // Yangi ma'lumotni listga qo‘shish
-        message.success("✅ Magazin qo‘shildi!"); // Bildirishnoma chiqarish
-        setIsModalOpen(false); // Modalni yopish
-        setMagazinNomi(""); // Inputlarni tozalash
+        setData([...data, response.data]); 
+        message.success("✅ Magazin qo‘shildi!"); 
+        setIsModalOpen(false); 
+        setMagazinNomi(""); 
         setManzil("");
         setPhone("");
       })
@@ -63,7 +63,7 @@ const Magazinlar = () => {
 console.log("POST qilinayotgan API:", `${BACKEND_URL}/api/stores`);
 
         console.error("Xatolik yuz berdi:", error);
-        message.error("❌ Xatolik yuz berdi. Qayta urinib ko‘ring!"); // Xatolik bildirishi
+        message.error("❌ Xatolik yuz berdi. Qayta urinib ko‘ring!"); 
       });
   };
   
