@@ -1,10 +1,7 @@
 import {
   BrowserRouter,
-  createBrowserRouter,
-  Route,
   Routes,
-  RouterProvider,
-  useNavigate,
+  Route,
   Navigate,
 } from "react-router-dom";
 import Layout from "./components/layout/Layout";
@@ -16,64 +13,39 @@ import Hodimlar from "./components/hodimlar/Hodimlar";
 import TayorMaxsultolar from "./components/tayormaxsulotlar/TayorMaxsultolar";
 import { useEffect, useState } from "react";
 
-function App() {
+function ProtectedRoute({ element }) {
+  const isAuthenticated = !!localStorage.getItem("token");
+  return isAuthenticated ? element : <Navigate to="/login" replace />;
+}
 
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    !!localStorage.getItem("token") // Token mavjud bo‘lsa, `true` qilib olamiz
-  );
+function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token);
-  }, [localStorage.getItem("token")]); // Token o‘zgarsa, `useEffect` qayta ishlaydi
-  console.log(isAuthenticated);
+    const checkAuth = () => setIsAuthenticated(!!localStorage.getItem("token"));
+    window.addEventListener("storage", checkAuth);
+    return () => window.removeEventListener("storage", checkAuth);
+  }, []);
 
-  const router = createBrowserRouter([
-    {
-      path: "/login",
-      element: <LoginPage />,
-    },
-    {
-      path: "/",
-      element: <Layout />,
-      children: [
-        {
-          path: "/statistika",
-          element: <Statistika />,
-        },
-        {
-          path: "/ombor",
-          element: <Ombor />,
-        },
-        {
-          path: "/magazinlar",
-          element: <Magazinlar />,
-        },
-        {
-          path: "/hodimlar",
-          element: <Hodimlar />,
-        },
-        {
-          path: '/tayormaxsulotlar',
-          element: <TayorMaxsultolar />
-        }
-      ]
-    },
-  ]);
   return (
-    <>
-      {/* <RouterProvider router={router} /> */}
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="*" element={isAuthenticated ? <LoginPage /> : <Navigate to="/" replace />} />
-          <Route
-            path="/home"
-            element={isAuthenticated ? <Layout /> : <Navigate to="/" replace />}
-          />
-        </Routes>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <Routes>
+        {/* Login sahifasi */}
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} />
+
+        {/* Faqat token bo‘lsa ochiladi */}
+        <Route path="/" element={<ProtectedRoute element={<Layout />} />}>
+          <Route path="statistika" element={<Statistika />} />
+          <Route path="ombor" element={<Ombor />} />
+          <Route path="magazinlar" element={<Magazinlar />} />
+          <Route path="hodimlar" element={<Hodimlar />} />
+          <Route path="tayormaxsulotlar" element={<TayorMaxsultolar />} />
+        </Route>
+
+        {/* Noto‘g‘ri URL bo‘lsa login sahifasiga yo‘naltiramiz */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

@@ -6,41 +6,55 @@ import logo from '../../src/assets/logo-dac03tgN.png';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function LoginPage() {
-    const [phone, setPhone] = useState();
-    const [password, setPassword] = useState();
+    const [phone, setPhone] = useState("");
+    const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
     const Login = async (e) => {
         e.preventDefault();
-
-        let formattedPhone = phone.startsWith("998") ? phone : `998${phone}`;
-
+    
+        let formattedPhone = phone.startsWith("+998") 
+            ? phone 
+            : phone.startsWith("998") 
+            ? `+${phone}` 
+            : `+998${phone}`;
+    
+        console.log("Jo'natilayotgan ma'lumot:", {
+            phoneNumber: formattedPhone,
+            password: password
+        });
+    
         try {
-            const response = await axios.post(`${BACKEND_URL}/auth/sign-in`, {
-                phoneNumber: formattedPhone,
-                password: password
-            }, {
-                headers: {
-                    "Content-Type": "application/json"
+            const response = await axios.post(
+                `${BACKEND_URL}/auth/sign-in`, 
+                {
+                    phoneNumber: formattedPhone,  // ✅ Avval telefon raqam
+                    password: password            // ✅ Keyin parol
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
                 }
-            });
-
+            );
+    
             console.log("Login muvaffaqiyatli:", response.data);
             localStorage.setItem("token", response?.data?.tokens?.accessToken);
-            navigate("/statistika");
-
+            navigate("/");
+    
         } catch (error) {
             if (error.response) {
-                console.error("Status:", error.response.status);
-                console.error("Data:", error.response.data);
+                console.error("Server javobi:", error.response.data);
+                alert(error.response.data.message || "Login xatosi!");
             } else if (error.request) {
-                console.error("Request error:", error.request);
+                console.error("Serverdan javob kelmadi:", error.request);
             } else {
-                console.error("Xato:", error.message);
+                console.error("Xatolik:", error.message);
             }
         }
     };
+    
     
     return (
         <section className="h-screen flex justify-center items-center bg-gray-100">
@@ -48,8 +62,8 @@ function LoginPage() {
                 <div className="flex justify-center mb-6">
                     <img src={logo} alt="AQVO Logo" className="h-10" />
                 </div>
-                <form onClick={Login}>
-                    <div class="mb-5">
+                <form onSubmit={Login}> 
+                    <div className="mb-5">
                         <label className="block text-sm font-medium text-gray-700">Telefon raqami</label>
                         <div className="relative flex items-center border border-gray-300 rounded-lg overflow-hidden">
                             <span className="bg-gray-200 px-3 py-2 flex items-center">
@@ -57,42 +71,39 @@ function LoginPage() {
                             </span>
                             <input
                                 type="tel"
-                                id="text"
-                                class="flex-1 p-2 focus:outline-none"
+                                className="flex-1 p-2 focus:outline-none"
                                 placeholder="99 999 99 99"
                                 value={phone}
-                                onChange={(e) => setPhone(e?.target?.value)}
+                                onChange={(e) => setPhone(e.target.value)}
                                 required
                             />
                         </div>
                     </div>
-                    <div class="mb-5">
+                    <div className="mb-5">
                         <label className="block text-sm font-medium text-gray-700">Parol</label>
                         <div className="relative">
                             <input
                                 type={showPassword ? "text" : "password"}
                                 placeholder="********"
                                 value={password}
-                                class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none"
-                                onChange={(e) => setPassword(e?.target?.value)}
+                                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none"
+                                onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
                             <button
                                 type="button"
                                 className="absolute right-3 top-2 text-gray-500"
-                                
                                 onClick={() => setShowPassword(!showPassword)}
                             >
-                                {showPassword ? <FaEye />:<FaEyeSlash />}
+                                {showPassword ? <FaEye /> : <FaEyeSlash />}
                             </button>
                         </div>
                     </div>
                     <button
-                        
                         type="submit"
-                        class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
                     >
-                        Submit
+                        Kirish
                     </button>
                 </form>
             </div>
