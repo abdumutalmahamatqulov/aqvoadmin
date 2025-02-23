@@ -37,7 +37,7 @@ function App() {
         <Route path="/" element={<ProtectedRoute element={<Layout />} />}>
           <Route path="statistika" element={<Statistika />} />
           <Route path="ombor" element={<Ombor />} />
-          <Route path="magazinlar" element={<Magazinlar />} />
+          <Route path="magazinlar" element={<Magazinlar />}  />
           <Route path="hodimlar" element={<Hodimlar />} />
           <Route path="tayormaxsulotlar" element={<TayorMaxsultolar />} />
         </Route>

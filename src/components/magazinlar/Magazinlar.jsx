@@ -1,43 +1,174 @@
-import React, { useState } from 'react';
-import { AudioOutlined } from '@ant-design/icons';
-import { Input, Space, Button, Modal } from 'antd';
+import React, { useEffect, useState } from "react";
+import { Input, Space, Button, Modal, Table, message } from "antd";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import axios from "axios";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { BACKEND_URL } from "../../Common/Constants";
 
 const { Search } = Input;
 
-const onSearch = (value) => console.log("Qidiruv natijasi:", value);
-
 const Magazinlar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [magazinNomi, setMagazinNomi] = useState("");
+  const [manzil, setManzil] = useState("");
+  const [phone, setPhone] = useState("");
+  const [data, setData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
+  useEffect(() => {
+    axios
+      .get(`${BACKEND_URL}/api/stores`)
+      .then((response) => {
+        console.log("Serverdan kelgan data:", response.data);
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.error("Xatolik yuz berdi:", error);
+        if (error.response) {
+          console.error("Status kodi:", error.response.status);
+          console.error("Xatolik ma'lumoti:", error.response.data);
+        } else if (error.request) {
+          console.error("So‘rov jo‘natildi, lekin javob kelmadi:", error.request);
+        } else {
+          console.error("So‘rovni bajarish vaqtida xatolik yuz berdi:", error.message);
+        }
+      });
+  }, []);
+  
 
+  // Modal funksiyalari
+  const showModal = () => setIsModalOpen(true);
+  const handleCancel = () => setIsModalOpen(false);
   const handleOk = () => {
-    setIsModalOpen(false);
+    const newStore = {
+      name: magazinNomi,
+      address: manzil,
+      phone: phone,
+    };
+  
+    axios
+      .post(`${BACKEND_URL}/api/stores`, newStore)
+      .then((response) => {
+        console.log("Yangi magazin qo‘shildi:", response.data);
+        setData([...data, response.data]); // Yangi ma'lumotni listga qo‘shish
+        message.success("✅ Magazin qo‘shildi!"); // Bildirishnoma chiqarish
+        setIsModalOpen(false); // Modalni yopish
+        setMagazinNomi(""); // Inputlarni tozalash
+        setManzil("");
+        setPhone("");
+      })
+      .catch((error) => {
+        console.log("BACKEND_URL:", BACKEND_URL);
+console.log("POST qilinayotgan API:", `${BACKEND_URL}/api/stores`);
+
+        console.error("Xatolik yuz berdi:", error);
+        message.error("❌ Xatolik yuz berdi. Qayta urinib ko‘ring!"); // Xatolik bildirishi
+      });
+  };
+  
+
+  // Qidiruv funksiyasi
+  const onSearch = (value) => {
+    setSearchTerm(value);
   };
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  // Tahrirlash funksiyasi
+  const editItem = (id) => {
+    console.log("Tahrirlash ID:", id);
   };
+
+  // O‘chirish funksiyasi
+  const deleteItem = (id) => {
+    console.log("O‘chirish ID:", id);
+  };
+
+  // Filterlangan ma'lumotlar
+  const filteredData = data.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Jadval ustunlari
+  const columns = [
+    { title: "№", dataIndex: "id", key: "id" },
+    { title: "Nomi", dataIndex: "name", key: "name" }, 
+    { title: "Manzili", dataIndex: "address", key: "address" },
+    { title: "Telefon", dataIndex: "phone", key: "phone" },
+    
+    {
+      title: "Amallar",
+      key: "actions",
+      render: (_, record) => (
+        <div>
+          <Button
+            type="link"
+            icon={<EditOutlined style={{ color: "green" }} />}
+            onClick={() => editItem(record.id)}
+          />
+          <Button
+            type="link"
+            icon={<DeleteOutlined style={{ color: "red" }} />}
+            onClick={() => deleteItem(record.id)}
+          />
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <div className="flex items-center justify-around w-full h-[60px] mt-[20px] px-[25px]">
-      <p>Magazinlar</p>
-      {/* <div className='w-[300px]'> */}
+    <div className="p-5">
+      <div className="flex items-center justify-between mb-4">
+        <h2>Magazinlar</h2>
+        <Space>
+          <Search placeholder="Qidiruv..." onSearch={onSearch} enterButton />
+          <Button type="primary" onClick={showModal}>
+            Magazin qo'shish
+          </Button>
+        </Space>
+      </div>
 
-      <Search placeholder="Qidiruv..." onSearch={onSearch} enterButton  />
+      {/* Modal */}
+  
+      <Modal
+  title="Magazin qo‘shish"
+  open={isModalOpen}
+  onOk={handleOk}
+  onCancel={handleCancel}
+>
+  <p>
+    <label>Magazin nomi</label>
+    <Input
+      placeholder="Magazin nomini kiriting"
+      value={magazinNomi}
+      onChange={(e) => setMagazinNomi(e.target.value)}
+    />
+  </p>
+  <br />
+  <p>
+    <label>Manzil</label>
+    <Input
+      placeholder="Manzilni kiriting"
+      value={manzil}
+      onChange={(e) => setManzil(e.target.value)}
+    />
+  </p>
+  <br />
 
-      <Button type="primary" onClick={showModal} >
-        Magazin qo'shish
-      </Button>
-      {/* </div> */}
+  <p>
+          <label>Raqmni kiriting</label>
+          <PhoneInput
+            international
+            defaultCountry="UZ"
+            value={phone}
+            onChange={setPhone}
+            className="w-full py-2 px-3 border border-gray-300 rounded-md text-sm my-2"
+          />
+        </p>
+</Modal>
 
-      <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <p>Modal tarkibi...</p>
-        <p>Qo'shimcha ma'lumot...</p>
-        <p>Boshqa ma'lumot...</p>
-      </Modal>
+
+      {/* Jadval */}
+      <Table columns={columns} dataSource={filteredData} rowKey="id" bordered />
     </div>
   );
 };
