@@ -54,10 +54,10 @@ function App() {
           element: <Hodimlar />,
         },
         {
-          path: "/tayormaxsultolar",
-          element: <TayorMaxsultolar />,
-        },
-      ],
+          path: '/tayormaxsulotlar',
+          element: <TayorMaxsultolar />
+        }
+      ]
     },
   ]);
   return (
