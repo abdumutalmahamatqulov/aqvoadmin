@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Layout, Menu, Button } from "antd";
 import {
   MenuFoldOutlined,
@@ -40,6 +40,8 @@ const Header = () => {
   };
 
   return (
+    <>
+    
     <Layout>
       {isAuthenticated && (
         <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -58,6 +60,7 @@ const Header = () => {
           </Menu>
         </Sider>
       )}
+
 
       <Layout>
         {isAuthenticated && (
@@ -79,10 +82,16 @@ const Header = () => {
                 height: 64,
               }}
             />
+
           </Layout.Header>
+          
         )}
+<Outlet/>
       </Layout>
+
+
     </Layout>
+    </>
   );
 };
 
