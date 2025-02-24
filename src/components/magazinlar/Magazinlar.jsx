@@ -7,9 +7,8 @@ import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { BACKEND_URL } from "../../Common/Constants";
 import { ToastContainer, toast } from "react-toastify";
 
-const { Search } = Input;
-
-const Magazinlar = () => {
+ const { Search } = Input;
+ const Magazinlar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [magazinNomi, setMagazinNomi] = useState("");
   const [manzil, setManzil] = useState("");
@@ -21,23 +20,21 @@ const Magazinlar = () => {
     const token = localStorage.getItem("token");
     
     if (!token) {
-        console.error("❌ Token topilmadi!");
-        toast.error("Token topilmadi! ❌");
+        toast.error("Token topilmadi! ");
         return;
     }
 
-    console.log("Token:", token); // Token bor yoki yo‘qligini tekshirish
+    console.log("token", token); 
 
     axios.get(`${BACKEND_URL}/api/stores`, {
         headers: { Authorization: `Bearer ${token}` }
     })
     .then((response) => {
-        console.log("✅ Ma'lumot olindi:", response.data);
+        console.log("Ma'lumot olindi:", response.data);
         setData(response.data);
     })
     .catch((error) => {
-        console.error("❌ Xatolik yuz berdi:", error);
-        toast.error("Ma'lumot olishda xatolik! ❌");
+        toast.error("Ma'lumot olishda xatolik! ");
     });
 
 }, []);
@@ -72,7 +69,7 @@ const Magazinlar = () => {
 console.log("POST qilinayotgan API:", `${BACKEND_URL}/api/stores`);
 
         console.error("Xatolik yuz berdi:", error);
-        message.error("❌ Xatolik yuz berdi. Qayta urinib ko‘ring!"); 
+        message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!"); 
       });
   };
   
