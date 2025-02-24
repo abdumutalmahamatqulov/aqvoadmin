@@ -28,22 +28,31 @@ function LoginPage() {
         let formattedPhone = formatPhone(phone);
 
         toast.info("Ma'lumotlar yuborilmoqda... ⏳", { autoClose: 2000 });
-
         try {
             const response = await axios.post(
                 `${BACKEND_URL}/auth/sign-in`,
                 { phoneNumber: formattedPhone, password: password },
                 { headers: { "Content-Type": "application/json" } }
             );
-
-            localStorage.setItem("token", response?.data?.tokens?.accessToken);
+        
+            console.log("Server javobi:", response.data);
+        
+            const accessToken = response?.data?.data?.tokens?.access_token; // ✅ TO‘G‘RI YO‘L
+            console.log("Olingan token:", accessToken); 
+        
+            if (!accessToken) {
+                throw new Error("Token kelmadi!");
+            }
+        
+            localStorage.setItem("token", accessToken);
             toast.success("Tizimga muvaffaqiyatli kirdingiz! ✅", { autoClose: 2000 });
-
+        
             setTimeout(() => {
                 navigate("/");
             }, 2000);
-
         } catch (error) {
+            console.error("Login xatosi:", error);
+        
             if (error.response) {
                 toast.error(error.response.data.message || "Login yoki parol xato! ❌");
             } else if (error.request) {
@@ -52,6 +61,8 @@ function LoginPage() {
                 toast.error("Noma'lum xatolik! ❌");
             }
         }
+        
+        
     };
 
     return (

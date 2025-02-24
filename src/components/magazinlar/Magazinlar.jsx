@@ -18,23 +18,30 @@ const Magazinlar = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token"); // yoki sessionStorage
-    axios
-      .get(`${BACKEND_URL}/api/stores`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      .then((response) => {
-        console.log("Serverdan kelgan data:", response.data);
+    const token = localStorage.getItem("token");
+    
+    if (!token) {
+        console.error("❌ Token topilmadi!");
+        toast.error("Token topilmadi! ❌");
+        return;
+    }
+
+    console.log("Token:", token); // Token bor yoki yo‘qligini tekshirish
+
+    axios.get(`${BACKEND_URL}/api/stores`, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
+    .then((response) => {
+        console.log("✅ Ma'lumot olindi:", response.data);
         setData(response.data);
-        toast.success("Tizimga muvaffaqiyatli kirdingiz! ✅")
-      })
-      .catch((error) => {
-        console.error("Xatolik yuz berdi:", error);
-        toast.success("Tizimga muvaffaqiyatli kirdingiz! ✅")
-      });
-  }, []);
+    })
+    .catch((error) => {
+        console.error("❌ Xatolik yuz berdi:", error);
+        toast.error("Ma'lumot olishda xatolik! ❌");
+    });
+
+}, []);
+
   
   
 
@@ -138,36 +145,38 @@ console.log("POST qilinayotgan API:", `${BACKEND_URL}/api/stores`);
   onOk={handleOk}
   onCancel={handleCancel}
 >
-  <p>
-    <label>Magazin nomi</label>
-    <Input
-      placeholder="Magazin nomini kiriting"
-      value={magazinNomi}
-      onChange={(e) => setMagazinNomi(e.target.value)}
-    />
-  </p>
-  <br />
-  <p>
-    <label>Manzil</label>
-    <Input
-      placeholder="Manzilni kiriting"
-      value={manzil}
-      onChange={(e) => setManzil(e.target.value)}
-    />
-  </p>
-  <br />
+  <div className="space-y-4">  
+    <div>
+      <label>Magazin nomi</label>
+      <Input
+        placeholder="Magazin nomini kiriting"
+        value={magazinNomi}
+        onChange={(e) => setMagazinNomi(e.target.value)}
+      />
+    </div>
 
-  <p>
-          <label>Raqmni kiriting</label>
-          <PhoneInput
-            international
-            defaultCountry="UZ"
-            value={phone}
-            onChange={setPhone}
-            className="w-full py-2 px-3 border border-gray-300 rounded-md text-sm my-2"
-          />
-        </p>
+    <div>
+      <label>Manzil</label>
+      <Input
+        placeholder="Manzilni kiriting"
+        value={manzil}
+        onChange={(e) => setManzil(e.target.value)}
+      />
+    </div>
+
+    <div>
+      <label>Raqmni kiriting</label>
+      <PhoneInput
+        international
+        defaultCountry="UZ"
+        value={phone}
+        onChange={setPhone}
+        className="w-full py-2 px-3 border border-gray-300 rounded-md text-sm"
+      />
+    </div>
+  </div>
 </Modal>
+
 
 
       {/* Jadval */}

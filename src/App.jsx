@@ -12,10 +12,12 @@ import Magazinlar from "./components/magazinlar/Magazinlar";
 import Hodimlar from "./components/hodimlar/Hodimlar";
 import TayorMaxsultolar from "./components/tayormaxsulotlar/TayorMaxsultolar";
 import { useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
 
-function ProtectedRoute({ element }) {
+// 🔒 ProtectedRoute komponenti
+function ProtectedRoute() {
   const isAuthenticated = !!localStorage.getItem("token");
-  return isAuthenticated ? element : <Navigate to="/login" replace />;
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 }
 
 function App() {
@@ -30,20 +32,18 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        
-        {/* Login sahifasi */}
         <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} />
 
-        {/* Faqat token bo‘lsa ochiladi */}
-        <Route path="/" element={<ProtectedRoute element={<Layout />} />}>
-          <Route path="statistika" element={<Statistika />} />
-          <Route path="ombor" element={<Ombor />} />
-          <Route path="magazinlar" element={<Magazinlar />}  />
-          <Route path="hodimlar" element={<Hodimlar />} />
-          <Route path="tayormaxsulotlar" element={<TayorMaxsultolar />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Layout />}>
+            <Route path="statistika" element={<Statistika />} />
+            <Route path="ombor" element={<Ombor />} />
+            <Route path="magazinlar" element={<Magazinlar />} />
+            <Route path="hodimlar" element={<Hodimlar />} />
+            <Route path="tayormaxsulotlar" element={<TayorMaxsultolar />} />
+          </Route>
         </Route>
 
-        {/* Noto‘g‘ri URL bo‘lsa login sahifasiga yo‘naltiramiz */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>

@@ -1,4 +1,4 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Layout, Menu, Button } from "antd";
 import {
   MenuFoldOutlined,
@@ -13,24 +13,26 @@ import {
 import React, { useState, useEffect } from "react";
 import logo from "../../assets/logo-dac03tgN.png";
 
-const { Sider } = Layout;
+const { Sider, Header, Content } = Layout;
 
 const menuItems = [
   { path: "/statistika", icon: <BarChartOutlined />, label: "Statistika" },
   { path: "/ombor", icon: <ShopOutlined />, label: "Ombor" },
   { path: "/magazinlar", icon: <UserOutlined />, label: "Magazinlar" },
   { path: "/hodimlar", icon: <TeamOutlined />, label: "Hodimlar" },
-  { path: "/tayormaxsulotlar", icon: <InboxOutlined />, label: "tayormaxsulotlar" },
+  { path: "/tayormaxsulotlar", icon: <InboxOutlined />, label: "Tayor mahsulotlar" },
 ];
 
-const Header = () => {
+const SidebarLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token);
+    const checkAuth = () => setIsAuthenticated(!!localStorage.getItem("token"));
+    window.addEventListener("storage", checkAuth);
+    return () => window.removeEventListener("storage", checkAuth);
   }, []);
 
   const handleLogout = () => {
@@ -40,17 +42,16 @@ const Header = () => {
   };
 
   return (
-    <>
-    
-    <Layout>
+    <Layout style={{ minHeight: "100vh" }}>
+      {/* 🌟 Yon panel (Sidebar) */}
       {isAuthenticated && (
-        <Sider trigger={null} collapsible collapsed={collapsed}>
-          <div className="logo" style={{ padding: 16, textAlign: "center" }}>
+        <Sider trigger={null} collapsible collapsed={collapsed} theme="dark">
+          <div style={{ padding: 16, textAlign: "center" }}>
             <img src={logo} alt="AQVO Logo" style={{ height: 40 }} />
           </div>
-          <Menu theme="dark" mode="inline">
-            {menuItems.map((item, index) => (
-              <Menu.Item key={index} icon={item.icon}>
+          <Menu theme="dark" mode="inline" selectedKeys={[location.pathname]}>
+            {menuItems.map((item) => (
+              <Menu.Item key={item.path} icon={item.icon}>
                 <Link to={item.path}>{item.label}</Link>
               </Menu.Item>
             ))}
@@ -61,38 +62,38 @@ const Header = () => {
         </Sider>
       )}
 
-
+      {/* 🌟 Asosiy UI qismi */}
       <Layout>
         {isAuthenticated && (
-          <Layout.Header // `Header` ni bevosita chaqiramiz
+          <Header
             style={{
-              padding: 0,
+              padding: "0 16px",
               background: "#fff",
               display: "flex",
               justifyContent: "space-between",
+              alignItems: "center",
+              boxShadow: "0px 1px 4px rgba(0, 0, 0, 0.1)",
             }}
           >
             <Button
               type="text"
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
               onClick={() => setCollapsed(!collapsed)}
-              style={{
-                fontSize: "16px",
-                width: 64,
-                height: 64,
-              }}
+              style={{ fontSize: "16px" }}
             />
-
-          </Layout.Header>
-          
+            <Button type="primary" onClick={handleLogout} icon={<LogoutOutlined />}>
+              Chiqish
+            </Button>
+          </Header>
         )}
-<Outlet/>
+
+        {/* 🌟 Sahifalar */}
+        <Content style={{ margin: "16px", padding: "16px", background: "#fff", borderRadius: "8px" }}>
+          <Outlet />
+        </Content>
       </Layout>
-
-
     </Layout>
-    </>
   );
 };
 
-export default Header;
+export default SidebarLayout;
