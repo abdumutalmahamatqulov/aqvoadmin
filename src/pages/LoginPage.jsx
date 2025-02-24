@@ -6,6 +6,7 @@ import logo from '../../src/assets/logo-dac03tgN.png';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // 🎨 Toast dizayni uchun
+import { message } from "antd";
 
 function LoginPage() {
     const [phone, setPhone] = useState("");
@@ -27,7 +28,7 @@ function LoginPage() {
         e.preventDefault();
         let formattedPhone = formatPhone(phone);
 
-        toast.info("Ma'lumotlar yuborilmoqda... ⏳", { autoClose: 2000 });
+        // toast.info("Ma'lumotlar yuborilmoqda... ⏳", { autoClose: 2000 });
         try {
             const response = await axios.post(
                 `${BACKEND_URL}/auth/sign-in`,
@@ -45,7 +46,7 @@ function LoginPage() {
             }
         
             localStorage.setItem("token", accessToken);
-            toast.success("Tizimga muvaffaqiyatli kirdingiz! ✅", { autoClose: 2000 });
+            message.success("Royhatdan o'tdingiz"), { autoClose: 2000 };
         
             setTimeout(() => {
                 navigate("/");
