@@ -56,7 +56,7 @@ function LoginPage() {
 
     return (
         <section className="h-screen flex justify-center items-center bg-gray-100">
-            <ToastContainer position="top-right" theme="colored" /> {/* 🔥 Toast konteyneri */}
+            <ToastContainer position="top-right" theme="colored" /> 
 
             <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-sm">
                 <div className="flex justify-center mb-6">

@@ -30,6 +30,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        
         {/* Login sahifasi */}
         <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} />
 

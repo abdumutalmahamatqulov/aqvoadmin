@@ -5,6 +5,7 @@ import "react-phone-number-input/style.css";
 import axios from "axios";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { BACKEND_URL } from "../../Common/Constants";
+import { ToastContainer, toast } from "react-toastify";
 
 const { Search } = Input;
 
@@ -17,24 +18,24 @@ const Magazinlar = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
+    const token = localStorage.getItem("token"); // yoki sessionStorage
     axios
-      .get(`${BACKEND_URL}/api/stores`)
+      .get(`${BACKEND_URL}/api/stores`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
       .then((response) => {
         console.log("Serverdan kelgan data:", response.data);
         setData(response.data);
+        toast.success("Tizimga muvaffaqiyatli kirdingiz! ✅")
       })
       .catch((error) => {
         console.error("Xatolik yuz berdi:", error);
-        if (error.response) {
-          console.error("Status kodi:", error.response.status);
-          console.error("Xatolik ma'lumoti:", error.response.data);
-        } else if (error.request) {
-          console.error("So‘rov jo‘natildi, lekin javob kelmadi:", error.request);
-        } else {
-          console.error("So‘rovni bajarish vaqtida xatolik yuz berdi:", error.message);
-        }
+        toast.success("Tizimga muvaffaqiyatli kirdingiz! ✅")
       });
   }, []);
+  
   
 
   // Modal funksiyalari
@@ -118,6 +119,7 @@ console.log("POST qilinayotgan API:", `${BACKEND_URL}/api/stores`);
 
   return (
     <div className="p-5">
+      <ToastContainer position="top-right" theme="colored" />
       <div className="flex items-center justify-between mb-4">
         <h2>Magazinlar</h2>
         <Space>
