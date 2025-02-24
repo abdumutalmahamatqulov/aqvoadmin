@@ -18,7 +18,7 @@ const Magazinlar = () => {
 
   useEffect(() => {
     axios
-      .get(`${BACKEND_URL}/api/store-item`)
+      .get(`${BACKEND_URL}/api/stores`)
       .then((response) => {
         console.log("Serverdan kelgan data:", response.data);
         setData(response.data);
@@ -48,7 +48,7 @@ const Magazinlar = () => {
     };
   
     axios
-      .post(`${BACKEND_URL}/api/store-item`, newStore)
+      .post(`${BACKEND_URL}/api/stores`, newStore)
       .then((response) => {
         console.log("Yangi magazin qo‘shildi:", response.data);
         setData([...data, response.data]); 
@@ -59,8 +59,10 @@ const Magazinlar = () => {
         setPhone("");
       })
       .catch((error) => {
+        alert("Malumot yuborilmadi nega kodni xato yozdingmi?")
         console.log("BACKEND_URL:", BACKEND_URL);
-         alert("Malumot yuborilmadi")
+console.log("POST qilinayotgan API:", `${BACKEND_URL}/api/stores`);
+
         console.error("Xatolik yuz berdi:", error);
         message.error("❌ Xatolik yuz berdi. Qayta urinib ko‘ring!"); 
       });
