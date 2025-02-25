@@ -127,7 +127,9 @@ const Shopcard = () => {
               <Title level={5}>To'langan: 0</Title>
               <Title level={5}>Qarzdorlik: 0</Title>
               <Space>
-                <Button type="primary" onClick={ () => navigate(`/shop/${id}`)}>Mahsulotlar tarixini ko‘rish</Button>
+                <Button type="primary" onClick={() => navigate(`/shop/${id}`)}>
+                  Mahsulotlar tarixini ko‘rish
+                </Button>
                 <Button type="primary" onClick={showModal}>
                   Mahsulot qo‘shish
                 </Button>
@@ -205,7 +207,6 @@ const Shopcard = () => {
           locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
         />
       </Card>
-
       <Title level={4} style={{ marginTop: "20px" }}>
         Qabul qilingan to‘lovlar
       </Title>
@@ -222,7 +223,7 @@ const Shopcard = () => {
           ]}
           dataSource={[]} // Hozircha bo'sh
           pagination={false}
-          locale={{ emptyText:  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
+          locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
         />
       </Card>
     </div>
