@@ -46,7 +46,7 @@ function LoginPage() {
             }
         
             localStorage.setItem("token", accessToken);
-            message.success("Royhatdan o'tdingiz"), { autoClose: 2000 };
+            message.success("Royhatdan o'tdingiz"), { autoClose: 500 };
         
             setTimeout(() => {
                 navigate("/");
