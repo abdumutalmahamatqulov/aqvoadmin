@@ -14,10 +14,10 @@ function LoginPage() {
     const Login = async (e) => {
         e.preventDefault();
 
-        let formattedPhone = phone.startsWith("998") ? phone : `998${phone}`;
+        let formattedPhone = phone.startsWith("+998") ? phone : `+998${phone}`;
 
         try {
-            const response = await axios.post(`${BACKEND_URL}/auth/sign-in`, {
+            const response =await axios.post(`${BACKEND_URL}/auth/sign-in`, {
                 phoneNumber: formattedPhone,
                 password: password
             }, {
@@ -27,7 +27,8 @@ function LoginPage() {
             });
 
             console.log("Login muvaffaqiyatli:", response.data);
-            localStorage.setItem("token", response?.data?.tokens?.accessToken);
+            localStorage.setItem("token", response?.data?.data?.tokens?.access_token);
+            
             navigate("/statistika");
 
         } catch (error) {
@@ -41,14 +42,14 @@ function LoginPage() {
             }
         }
     };
-    
+
     return (
         <section className="h-screen flex justify-center items-center bg-gray-100">
             <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-sm">
                 <div className="flex justify-center mb-6">
                     <img src={logo} alt="AQVO Logo" className="h-10" />
                 </div>
-                <form onClick={Login}>
+                <form onSubmit={Login}>
                     <div class="mb-5">
                         <label className="block text-sm font-medium text-gray-700">Telefon raqami</label>
                         <div className="relative flex items-center border border-gray-300 rounded-lg overflow-hidden">
@@ -80,15 +81,15 @@ function LoginPage() {
                             <button
                                 type="button"
                                 className="absolute right-3 top-2 text-gray-500"
-                                
+
                                 onClick={() => setShowPassword(!showPassword)}
                             >
-                                {showPassword ? <FaEye />:<FaEyeSlash />}
+                                {showPassword ? <FaEye /> : <FaEyeSlash />}
                             </button>
                         </div>
                     </div>
                     <button
-                        
+
                         type="submit"
                         class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
                     >
