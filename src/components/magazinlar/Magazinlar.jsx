@@ -1,9 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Input, Space, Button, Modal, Table, message, Popconfirm, Spin } from "antd";
+import {
+  Input,
+  Space,
+  Button,
+  Modal,
+  Table,
+  message,
+  Popconfirm,
+  Spin,
+} from "antd";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import axios from "axios";
-import { EditOutlined, DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 import { BACKEND_URL } from "../../Common/Constants";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +35,6 @@ const Magazinlar = () => {
   const [searchLoading, setSearchLoading] = useState(false); // Qidiruv uchun loading
   const navigate = useNavigate();
 
-
   // Ma'lumotlarni olish
   const fetchData = () => {
     setLoading(true);
@@ -38,7 +50,9 @@ const Magazinlar = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        const apiData = Array.isArray(res.data) ? res.data : res.data.data || [];
+        const apiData = Array.isArray(res.data)
+          ? res.data
+          : res.data.data || [];
         setData(
           apiData.map((item, index) => ({
             key: index + 1,
@@ -93,7 +107,10 @@ const Magazinlar = () => {
     if (selectedId !== null) {
       axios
         .put(`${BACKEND_URL}/Stores/${selectedId}`, storeData, {
-          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         })
         .then(() => {
           message.success("Ma’lumot muvaffaqiyatli tahrirlandi!");
@@ -104,7 +121,10 @@ const Magazinlar = () => {
     } else {
       axios
         .post(`${BACKEND_URL}/Stores`, storeData, {
-          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         })
         .then(() => {
           message.success("Magazin muvaffaqiyatli qo‘shildi!");
@@ -161,28 +181,24 @@ const Magazinlar = () => {
       key: "actions",
       render: (_, record) => (
         <div
-          onClick={(e) => e.stopPropagation()} // ✅ Barcha amallarda sahifa o‘tib ketmasin
+          onClick={(e) => e.stopPropagation()}
           style={{ display: "flex", gap: "8px" }}
         >
-       
-  
-          {/* ✅ Tahrirlash - faqat modal ochadi */}
-          <Button 
-            type="link" 
-            icon={<EditOutlined style={{ color: "green" }} />} 
-            onClick={() => showEditModal(record.id)} 
+          <Button
+            type="link"
+            icon={<EditOutlined style={{ color: "green" }} />}
+            onClick={() => showEditModal(record.id)}
           />
-  
-          {/* ✅ O‘chirish - tasdiqlash bilan */}
-          <Popconfirm 
-            title="Haqiqatan ham o‘chirmoqchimisiz?" 
-            onConfirm={() => deleteData(record.id)} 
-            okText="Ha" 
+
+          <Popconfirm
+            title="Haqiqatan ham o‘chirmoqchimisiz?"
+            onConfirm={() => deleteData(record.id)}
+            okText="Ha"
             cancelText="Yo‘q"
           >
-            <Button 
-              type="link" 
-              icon={<DeleteOutlined style={{ color: "red" }} />} 
+            <Button
+              type="link"
+              icon={<DeleteOutlined style={{ color: "red" }} />}
             />
           </Popconfirm>
         </div>
@@ -196,13 +212,13 @@ const Magazinlar = () => {
       <div className="flex items-center justify-between mb-4">
         <h2>Magazinlar</h2>
         <Space>
-        <Search 
-  placeholder="Qidiruv..." 
-  value={searchTerm}
-  onChange={(e) => setSearchTerm(e.target.value)} // Real-time qidiruv
-  onSearch={onSearch} 
-  enterButton 
-/>
+          <Search
+            placeholder="Qidiruv..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)} // Real-time qidiruv
+            onSearch={onSearch}
+            enterButton
+          />
 
           <Button type="primary" onClick={showAddModal}>
             Magazin qo‘shish
@@ -217,24 +233,31 @@ const Magazinlar = () => {
         </div>
       ) : (
         <Table
-  columns={columns}
-  dataSource={filteredData}
-  rowKey="id"
-  bordered
-  loading={loading}
-  onRow={(record) => ({
-    onClick: () => navigate(`/magazin/${record.id}`), // Sahifaga o'tkazish
-  })}
-/>
-
+          columns={columns}
+          dataSource={filteredData}
+          rowKey="id"
+          bordered
+          loading={loading}
+          onRow={(record) => ({
+            onClick: () => navigate(`/magazin/${record.id}`), // Sahifaga o'tkazish
+          })}
+        />
       )}
 
       {/* Modal */}
-      <Modal title={selectedId ? "Magazinni tahrirlash" : "Magazin qo‘shish"} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+      <Modal
+        title={selectedId ? "Magazinni tahrirlash" : "Magazin qo‘shish"}
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
         <div className="space-y-4">
           <div>
             <label>Magazin nomi</label>
-            <Input value={magazinNomi} onChange={(e) => setMagazinNomi(e.target.value)} />
+            <Input
+              value={magazinNomi}
+              onChange={(e) => setMagazinNomi(e.target.value)}
+            />
           </div>
           <div>
             <label>Manzil</label>
@@ -242,7 +265,12 @@ const Magazinlar = () => {
           </div>
           <div>
             <label>Telefon</label>
-            <PhoneInput international defaultCountry="UZ" value={phone} onChange={setPhone} />
+            <PhoneInput
+              international
+              defaultCountry="UZ"
+              value={phone}
+              onChange={setPhone}
+            />
           </div>
         </div>
       </Modal>
