@@ -14,6 +14,7 @@ import TayorMaxsultolar from "./components/tayormaxsulotlar/TayorMaxsultolar";
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import Shopcard from "./components/shop-card/Shopcard";
+import History from "./components/Maxsulot-tarxi/History";
 
 // 🔒 ProtectedRoute komponenti
 function ProtectedRoute() {
@@ -41,6 +42,7 @@ function App() {
             <Route path="ombor" element={<Ombor />} />
             <Route path="magazinlar" element={<Magazinlar />} />
             <Route path="/magazin/:id" element={<Shopcard/>} />
+            <Route path="/shop/:id" element={<History/>} />
             <Route path="hodimlar" element={<Hodimlar />} />
             <Route path="tayormaxsulotlar" element={<TayorMaxsultolar />} />
           </Route>

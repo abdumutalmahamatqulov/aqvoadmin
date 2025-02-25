@@ -239,7 +239,14 @@ const Magazinlar = () => {
           bordered
           loading={loading}
           onRow={(record) => ({
-            onClick: () => navigate(`/magazin/${record.id}`), // Sahifaga o'tkazish
+            onClick: () =>
+              navigate(`/magazin/${record.id}`, {
+                state: {
+                  name: record.name,
+                  phone: record.phone,
+                  address: record.address,
+                },
+              }),
           })}
         />
       )}
