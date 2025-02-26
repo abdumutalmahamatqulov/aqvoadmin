@@ -35,7 +35,6 @@ const Shopcard = () => {
   const [modalText, setModalText] = useState("Modal tarkibi");
   const navigate = useNavigate();
   // console.log(navigate);
-  // Modalni ochish funksiyasi
   const showModal = () => {
     setOpen(true);
   };
@@ -123,7 +122,7 @@ const Shopcard = () => {
           <Col span={12} style={{ textAlign: "right" }}>
             <Space direction="vertical" size="small">
               <RangePicker />
-              <Title level={5}>Jami: 0</Title>
+              <Title level={5}>Jami: {shopcard?.allTotalPrices || "0"}</Title>
               <Title level={5}>To'langan: 0</Title>
               <Title level={5}>Qarzdorlik: 0</Title>
               <Space>

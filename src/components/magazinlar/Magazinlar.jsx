@@ -36,6 +36,7 @@ const Magazinlar = () => {
   const navigate = useNavigate();
 
   // Ma'lumotlarni olish
+  console.log("data dan kelayotgan malumot" , data);
   const fetchData = () => {
     setLoading(true);
     const token = localStorage.getItem("token");
@@ -60,8 +61,12 @@ const Magazinlar = () => {
             name: item.name,
             address: item.address,
             phone: item.phone,
+            
+
+
           }))
         );
+      // console.log(res?.data?.storeItems);
       })
       .catch(() => message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!"))
       .finally(() => setLoading(false));
@@ -87,6 +92,7 @@ const Magazinlar = () => {
       setMagazinNomi(selectedItem.name);
       setManzil(selectedItem.address);
       setPhone(selectedItem.phone);
+
       setIsModalOpen(true);
     }
   };
@@ -94,7 +100,6 @@ const Magazinlar = () => {
   // Modalni yopish
   const handleCancel = () => setIsModalOpen(false);
 
-  // Ma'lumot qo'shish yoki tahrirlash
   const handleOk = () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -112,12 +117,19 @@ const Magazinlar = () => {
             "Content-Type": "application/json",
           },
         })
-        .then(() => {
+        .then((res) => {
+          console.log("Server javobi:", res.data);
           message.success("Ma’lumot muvaffaqiyatli tahrirlandi!");
           fetchData();
           setIsModalOpen(false);
         })
-        .catch(() => message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!"));
+        .catch((error) => {
+          console.error("Xatolik tafsilotlari:", error.response?.data || error.message);
+          message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!");
+          console.log("Ma’lumotlar (data):", data);
+
+        });
+        
     } else {
       axios
         .post(`${BACKEND_URL}/Stores`, storeData, {
