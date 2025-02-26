@@ -215,7 +215,7 @@ const Magazinlar = () => {
           <Search
             placeholder="Qidiruv..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)} // Real-time qidiruv
+            onChange={(e) => setSearchTerm(e.target.value)}
             onSearch={onSearch}
             enterButton
           />
@@ -254,10 +254,7 @@ const Magazinlar = () => {
       {/* Modal */}
       <Modal
         title={selectedId ? "Magazinni tahrirlash" : "Magazin qo‘shish"}
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
+        open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <div className="space-y-4">
           <div>
             <label>Magazin nomi</label>
