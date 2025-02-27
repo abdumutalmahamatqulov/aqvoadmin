@@ -35,7 +35,6 @@ const Shopcard = () => {
   const [modalText, setModalText] = useState("Modal tarkibi");
   const navigate = useNavigate();
   // console.log(navigate);
-  // Modalni ochish funksiyasi
   const showModal = () => {
     setOpen(true);
   };
@@ -58,7 +57,7 @@ const Shopcard = () => {
   useEffect(() => {
     if (!navigateData.name) {
       axios
-        .get(`${BACKEND_URL}/Stores/${id}`)
+        .get(`${BACKEND_URL}/store-item/${id}`)
         .then((res) => setMagazin(res.data))
         .catch((err) => console.error("Xatolik yuz berdi!", err));
     }
@@ -67,7 +66,7 @@ const Shopcard = () => {
   useEffect(() => {
     // Tashkilot ma’lumotlarini olish
     axios
-      .get(`${BACKEND_URL}/Stores/${id}`)
+      .get(`${BACKEND_URL}/store-item/${id}`)
       .then((res) => {
         console.log("Magazin API javobi:", res.data);
         if (res.data) {
@@ -123,11 +122,13 @@ const Shopcard = () => {
           <Col span={12} style={{ textAlign: "right" }}>
             <Space direction="vertical" size="small">
               <RangePicker />
-              <Title level={5}>Jami: 0</Title>
+              <Title level={5}>Jami: {shopcard?.allTotalPrices || "0"}</Title>
               <Title level={5}>To'langan: 0</Title>
               <Title level={5}>Qarzdorlik: 0</Title>
               <Space>
-                <Button type="primary" onClick={ () => navigate(`/shop/${id}`)}>Mahsulotlar tarixini ko‘rish</Button>
+                <Button type="primary" onClick={() => navigate(`/shop/${id}`)}>
+                  Mahsulotlar tarixini ko‘rish
+                </Button>
                 <Button type="primary" onClick={showModal}>
                   Mahsulot qo‘shish
                 </Button>
@@ -205,7 +206,6 @@ const Shopcard = () => {
           locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
         />
       </Card>
-
       <Title level={4} style={{ marginTop: "20px" }}>
         Qabul qilingan to‘lovlar
       </Title>
@@ -222,11 +222,10 @@ const Shopcard = () => {
           ]}
           dataSource={[]} // Hozircha bo'sh
           pagination={false}
-          locale={{ emptyText:  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
+          locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
         />
       </Card>
     </div>
   );
 };
-
 export default Shopcard;
