@@ -22,7 +22,6 @@ import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const { Search } = Input;
-
 const Magazinlar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [magazinNomi, setMagazinNomi] = useState("");
@@ -32,10 +31,11 @@ const Magazinlar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [searchLoading, setSearchLoading] = useState(false); // Qidiruv uchun loading
+  const [searchLoading, setSearchLoading] = useState(false);
   const navigate = useNavigate();
 
   // Ma'lumotlarni olish
+  console.log("data dan kelayotgan malumot", data);
   const fetchData = () => {
     setLoading(true);
     const token = localStorage.getItem("token");
@@ -71,7 +71,6 @@ const Magazinlar = () => {
     fetchData();
   }, []);
 
-  // Qo'shish yoki tahrirlash uchun modalni ochish
   const showAddModal = () => {
     setSelectedId(null);
     setMagazinNomi("");
@@ -91,7 +90,6 @@ const Magazinlar = () => {
     }
   };
 
-  // Modalni yopish
   const handleCancel = () => setIsModalOpen(false);
 
   // Ma'lumot qo'shish yoki tahrirlash
@@ -112,12 +110,17 @@ const Magazinlar = () => {
             "Content-Type": "application/json",
           },
         })
-        .then(() => {
-          message.success("Ma’lumot muvaffaqiyatli tahrirlandi!");
-          fetchData();
-          setIsModalOpen(false);
+        .then((res) => {
+          console.log("Serverdan kelgan javob:", res.data);
+          message.success("Mufaqiyatli ozgartrildi");
         })
-        .catch(() => message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!"));
+        .catch((error) => {
+          message.error("Xatolik yuz berdi");
+          console.error(
+            "PUT so‘rov xatosi:",
+            error.response?.data || error.message
+          );
+        });
     } else {
       axios
         .post(`${BACKEND_URL}/Stores`, storeData, {
@@ -242,9 +245,11 @@ const Magazinlar = () => {
             onClick: () =>
               navigate(`/magazin/${record.id}`, {
                 state: {
+                  id: record.id,
                   name: record.name,
                   phone: record.phone,
                   address: record.address,
+                  storeItems: record.storeItems?.[0]?.price,
                 },
               }),
           })}
