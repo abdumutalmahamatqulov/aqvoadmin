@@ -41,7 +41,7 @@ const Shopcard = () => {
   const showModal = () => {
     setOpen(true);
   };
-  console.log("magazin=>",magazin?.storeItems);
+  console.log("magazin=>",magazin);
 console.log("Shop Card=>",shopcard);
   // Modalni yopish funksiyasi
   const handleCancel = () => {
@@ -80,7 +80,6 @@ console.log("Shop Card=>",shopcard);
       .catch((err) => console.error("Xatolik yuz berdi!", err))
       .finally(() => setLoading(false));
 
-    // Mahsulotlar ro‘yxatini olish
     axios
       .get(`${BACKEND_URL}/Stores/${id}`)
       .then((res) => {
