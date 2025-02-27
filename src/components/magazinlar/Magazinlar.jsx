@@ -62,7 +62,6 @@ const Magazinlar = () => {
             phone: item.phone,
           }))
         );
-        // console.log(res?.data?.storeItems);
       })
       .catch(() => message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!"))
       .finally(() => setLoading(false));
@@ -72,7 +71,6 @@ const Magazinlar = () => {
     fetchData();
   }, []);
 
-  // Qo'shish yoki tahrirlash uchun modalni ochish
   const showAddModal = () => {
     setSelectedId(null);
     setMagazinNomi("");
@@ -113,9 +111,11 @@ const Magazinlar = () => {
           },
         })
         .then((res) => {
-          console.log("Serverdan kelgan javob:", res.data); // ✅ Server javobini tekshirish
+          console.log("Serverdan kelgan javob:", res.data);
+          message.success("Mufaqiyatli ozgartrildi");
         })
         .catch((error) => {
+          message.error("Xatolik yuz berdi");
           console.error(
             "PUT so‘rov xatosi:",
             error.response?.data || error.message
@@ -245,9 +245,11 @@ const Magazinlar = () => {
             onClick: () =>
               navigate(`/magazin/${record.id}`, {
                 state: {
+                  id: record.id,
                   name: record.name,
                   phone: record.phone,
                   address: record.address,
+                  storeItems: record.storeItems?.[0]?.price,
                 },
               }),
           })}

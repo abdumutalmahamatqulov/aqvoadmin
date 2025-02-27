@@ -26,10 +26,12 @@ const Shopcard = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigateData = location.state || {};
+  const token = localStorage.getItem("token")
+  const [data, setData] = useState([]);
   const [shopcard, setShop] = useState(navigateData);
-  const [magazin, setMagazin] = useState(null);
+  const [magazin, setMagazin] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(magazin);
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [modalText, setModalText] = useState("Modal tarkibi");
@@ -38,7 +40,8 @@ const Shopcard = () => {
   const showModal = () => {
     setOpen(true);
   };
-
+  console.log("magazin=>",magazin?.storeItems);
+console.log("Shop Card=>",shopcard);
   // Modalni yopish funksiyasi
   const handleCancel = () => {
     setOpen(false);
@@ -55,13 +58,19 @@ const Shopcard = () => {
   };
 
   useEffect(() => {
-    if (!navigateData.name) {
+    // if (!navigateData.name) {
       axios
-        .get(`${BACKEND_URL}Store${id}`)
-        .then((res) => setMagazin(res.data))
+        .get(`${BACKEND_URL}/store-item/store/${id}?page=1&limit=10` , {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          console.log(res.data.data);
+          setMagazin(res.data.data)
+        })
         .catch((err) => console.error("Xatolik yuz berdi!", err));
-    }
+    // }
   }, [id, navigateData]);
+
 
   useEffect(() => {
     axios
@@ -79,7 +88,6 @@ const Shopcard = () => {
     axios
       .get(`${BACKEND_URL}/Stores/${id}`)
       .then((res) => {
-        console.log("Mahsulotlar API javobi:", res.data);
         if (res.data) {
           setProducts(res.data);
         }
@@ -121,9 +129,10 @@ const Shopcard = () => {
           <Col span={12} style={{ textAlign: "right" }}>
             <Space direction="vertical" size="small">
               <RangePicker />
-              <Title level={5}>Jami: {shopcard?.allTotalPrices || "0"}</Title>
-              <Title level={5}>To'langan: 0</Title>
-              <Title level={5}>Qarzdorlik: 0</Title>
+              
+              <Title level={5}>Jami: {magazin?.allTotalPrices || "0"}</Title>
+              <Title level={5}>To'langan: {magazin?.totalPaidAmount || "0"}</Title>
+              <Title level={5}>Qarzdorlik: {magazin?.totalDebt || "0"}</Title>
               <Space>
                 <Button type="primary" onClick={() => navigate(`/shop/${id}`)}>
                   Mahsulotlar tarixini ko‘rish
@@ -177,7 +186,7 @@ const Shopcard = () => {
         <Table
           columns={[
             { title: "№", dataIndex: "key", key: "key" },
-            { title: "Mahsulot nomi", dataIndex: "name", key: "name" },
+            { title: "Mahsulot nomi", dataIndex: "conserveType", key: "conserveType" },
             { title: "Soni", dataIndex: "quantity", key: "quantity" },
             { title: "Narxi (so‘m)", dataIndex: "price", key: "price" },
             {
@@ -188,13 +197,13 @@ const Shopcard = () => {
             { title: "Jami (so‘m)", dataIndex: "total", key: "total" },
             {
               title: "Topshirilgan vaqti",
-              dataIndex: "deliveredAt",
-              key: "deliveredAt",
+              dataIndex: "lastUpdatedAt",
+              key: "lastUpdatedAt",
             },
           ]}
           dataSource={products.map((item, index) => ({
             key: index + 1,
-            name: item.name,
+            name: item.conserveType,
             quantity: item.quantity,
             price: item.price,
             paid: item.paid,
