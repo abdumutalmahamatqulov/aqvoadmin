@@ -1,11 +1,10 @@
 import { Outlet } from "react-router-dom";
-import Headers from "../header/Headers";
+import SidebarLayout from "../Header/SidebarLayout";
 
 const Layout = () => {
     return (
         <div className="flex flex-col min-h-screen">
-            <Header />
-            <Outlet />
+            <SidebarLayout />
         </div>
     );
 };

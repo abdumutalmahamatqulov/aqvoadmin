@@ -15,6 +15,8 @@ import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import Shopcard from "./components/shop-card/Shopcard";
 import History from "./components/Maxsulot-tarxi/History";
+import HodimlarGet from "./components/hodimlar/HodimlarGet";
+import AttendaceTable from "./components/hodimlar/AttendaceTable";
 
 // 🔒 ProtectedRoute komponenti
 function ProtectedRoute() {
@@ -44,6 +46,8 @@ function App() {
             <Route path="/magazin/:id" element={<Shopcard/>} />
             <Route path="/shop/:id" element={<History/>} />
             <Route path="hodimlar" element={<Hodimlar />} />
+            <Route index element ={<HodimlarGet/>}/>
+            <Route path="attendance" element={<AttendaceTable/>}/>
             <Route path="tayormaxsulotlar" element={<TayorMaxsultolar />} />
           </Route>
         </Route>

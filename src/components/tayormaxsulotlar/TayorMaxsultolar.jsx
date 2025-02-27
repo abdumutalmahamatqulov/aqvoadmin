@@ -1,14 +1,29 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { FaRegEdit } from 'react-icons/fa'
-import { RiDeleteBin6Line } from 'react-icons/ri'
 import { BACKEND_URL } from '../../Common/Constants';
-
+import { toast, ToastContainer } from 'react-toastify';
+import { Button, Input, message, Modal, Popconfirm, Space, Spin, Table } from 'antd';
+import Search from 'antd/es/transfer/search';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 const TayorMaxsultolar = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [tayorMaxsulot, setTayorMaxsulotlar] = useState([]);
-    const token = localStorage.getItem("token");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [quantity, setQuantity] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
+    const [searchLoading, setSearchLoading] = useState(false);
+    const [maxsulotNomi, setMaxsulotNomi] = useState("");
 
     const setTayorMaxsulot = () => {
+        setLoading(true);
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            toast.error("Token can not be found");
+            setLoading(false);
+            return;
+        }
         axios.get(`${BACKEND_URL}/conserve-type`, {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -16,61 +31,201 @@ const TayorMaxsultolar = () => {
         })
             .then(res => {
                 setTayorMaxsulotlar(res?.data?.data || []);
-                // console.log("data =>",res.data.data[1].readyConserves[0].quantity );
 
             })
-            .catch(err => console.error("Error=>", err));
+            .catch(err => console.error("Error=>", err))
+            .finally(() => setLoading(false));
     };
     useEffect(() => {
         setTayorMaxsulot();
     }, []);
+
+    const showAddModal = () => {
+        setSelectedId(null);
+        setMaxsulotNomi("");
+        setQuantity(null);
+        setIsModalOpen(true);
+    };
+
+    const showEditModal = (id) => {
+        const selectedItem = tayorMaxsulot.find((item) => item.id === id);
+        if (selectedItem) {
+            setSelectedId(id);
+            setMaxsulotNomi(selectedItem.conserveType);
+            setQuantity(selectedItem.readyConserves?.[0]?.quantity ?? 0);
+            setIsModalOpen(true);
+        }
+    };
+    const handleCancel = () => setIsModalOpen(false);
+
+    const handleOk = () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            toast.error("Token can not be found");
+            return;
+        }
+
+        const maxsulotData = { conserveType: maxsulotNomi };
+
+
+        if (selectedId !== null) {
+            axios
+                .put(`${BACKEND_URL}/conserve-type/${selectedId}`, maxsulotData, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                })
+                .then(() => {
+                    message.success("Ma’lumot muvaffaqiyatli tahrirlandi!");
+                    setTayorMaxsulot();
+                    setIsModalOpen(false);
+                })
+                .catch(() => message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!"));
+        } else {
+            axios
+                .post(`${BACKEND_URL}/conserve-type`, maxsulotData, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                })
+                .then(() => {
+                    message.success("Maxsulot muvaffaqiyatli qo‘shildi!");
+                    setTayorMaxsulot();
+                    setIsModalOpen(false);
+                })
+                .catch(() => message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!"));
+        }
+    };
+
+    const deleteData = (id) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            toast.error('Token can not be found');
+            return;
+        }
+        axios
+            .delete(`${BACKEND_URL}/conserve-type/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .then(() => {
+                message.success("Maxsulot muvaffaqiyatli o‘chirildi!");
+                setTayorMaxsulot();
+            })
+            .catch(() => message.error("O‘chirishda xatolik yuz berdi!"));
+    };
+
+    const onSearch = (value) => {
+        setSearchLoading(true);
+        setTimeout(() => {
+            setSearchTerm(value);
+            setSearchLoading(false);
+        }, 500);
+    };
+
+    const filteredData = tayorMaxsulot.filter((item) => {
+
+        const conserveType = item.conserveType ? item.conserveType?.toLowerCase() : "";
+        const quantity = item.readyConserves?.length > 0 && item.readyConserves[0]?.quantity
+            ? String(item.readyConserves?.[0]?.quantity ?? 0).toLowerCase()
+            : "";
+
+        return conserveType.includes(searchTerm.toLowerCase()) || quantity.includes(searchTerm.toLowerCase());
+    });
+    const dataSource = filteredData.map((item, index) => ({
+        ...item,
+        key: index + 1,
+        conserveType: item.conserveType || "Noma'lum",
+        quantity: item.readyConserves?.[0]?.quantity ?? 0,
+    }));
+
+    const columns = [
+        { title: "№", dataIndex: "key", key: "key" },
+        { title: "Konserva turi", dataIndex: "conserveType", key: "conserveType" },
+        { title: "Quantity", dataIndex: "quantity", key: "quantity" },
+        {
+            title: "Amallar",
+            key: "actions",
+            render: (_, record) => (
+                <div
+                    onClick={(e) => e.stopPropagation()}
+                    style={{ display: "flex", gap: "8px" }}
+                >
+                    <Button
+                        type="link"
+                        icon={<EditOutlined style={{ color: "green" }} />}
+                        onClick={() => showEditModal(record.id)}
+                    />
+
+                    <Popconfirm
+                        title="Haqiqatan ham o‘chirmoqchimisiz?"
+                        onConfirm={() => deleteData(record.id)}
+                        okText="Ha"
+                        cancelText="Yo‘q"
+                    >
+                        <Button
+                            type="link"
+                            icon={<DeleteOutlined style={{ color: "red" }} />}
+                        />
+                    </Popconfirm>
+                </div>
+            ),
+        },
+    ];
     return (
-        <div className='m-auto'>
-            <div className='bg-white text-2xl h-12 flex justify-between items-center px-4'>
-                <p>Tayyor mahsulotlar</p>
-                <button className='bg-blue-400 text-white rounded-xl text-sm px-3 h-10 hover:bg-blue-500'>
-                    Tayyor Mahsulot Qo'shish
-                </button>
-            </div>
+        <div className='p-5'>
+            <ToastContainer position="top-right" theme="colored" />
+            <div className="flex items-center justify-between mb-4">
+                <h2>Maxsulotlar</h2>
+                <Space>
+                    <Search
+                        placeholder="Qidiruv..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)} // Real-time qidiruv
+                        onSearch={onSearch}
+                        enterButton
+                    />
 
-            <div>
-
-                <table className="w-full text-sm text-left  text-gray-500 dark:text-gray-400">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                        <tr className="bg-gray-100 right-0 text-xl  font-bold">
-                            <th scope="col" className="px-6 py-3">No</th>
-                            <th scope="col" className="px-6 py-3">Name</th>
-                            <th scope="col" className="px-6 py-3">Quantity</th>
-                            <th scope="col" className="px-6 py-3">Edit</th>
-                            <th scope="col" className="px-6 py-3">Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tayorMaxsulot?.map((tayor, index) => (
-                            <tr key={tayor.id} className="border text-xl  font-bold">
-                                <td className="px-6 py-4 ">{index + 1}</td>
-                                <td className="px-6 py-4 border-1">{tayor.conserveType}</td>
-                                <td className="px-6 py-4 border-1">{tayor?.readyConserves[0]?.quantity ?? 0}</td>
-                                <td className="px-6 py-8 border">
-                                    <button
-                                        className="text-white px-3 py-1 rounded h-12 hover:bg-blue-400 justify-center flex gap-2">
-                                        <FaRegEdit className="bg-blue-400 text-[300px] w-full h-full" />
-                                        <p className="text-blue-500 text-4xl font-semibold">Edit</p>
-                                    </button>
-                                </td>
-                                <td className="items-center border bg-navy-300">
-                                    <button
-                                        className="text-white px-4 py-2 rounded-lg h-12 hover:bg-red-700 flex items-center justify-center gap-4 w-full">
-                                        <RiDeleteBin6Line className="text-[300px] text-red-500 w-10 h-10" />
-                                        <p className="text-red-500 text-2xl font-semibold">Delete</p>
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                    <Button type="primary" onClick={showAddModal}>
+                        Tayor Maxsulot qo‘shish
+                    </Button>
+                </Space>
             </div>
+            {searchLoading ? (
+                <div className="flex justify-center my-4">
+                    <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin  />}/>
+                </div>
+            ) : (
+                <Table
+                    columns={columns}
+                    dataSource={dataSource}
+                    rowKey="id"
+                    bordered
+                    loading={loading}
+                />
+            )}
+            <Modal
+                title={selectedId ? "Maxsulotni tayyorlashda qo'shiladingan mahsulotlar" : "Maxsulot qo'shish"}
+                open={isModalOpen}
+                onOk={handleOk}
+                onCancel={handleCancel}
+                okText='Saqlash'
+                cancelText='Bekor qilish'
+            >
+                <div className='space-y-4'>
+                    <label>Konserva turi:</label>
+                    <Input
+                        value={maxsulotNomi}
+                        onChange={(e) => setMaxsulotNomi(e?.target?.value)}
+                        placeholder='Konserva turini kiriting'
+                    />
+                </div>
+            </Modal>
         </div>
+
     )
 }
 export default TayorMaxsultolar;
