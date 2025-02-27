@@ -5,7 +5,9 @@ import { toast, ToastContainer } from 'react-toastify';
 import { Button, Input, message, Modal, Popconfirm, Space, Spin, Table } from 'antd';
 import Search from 'antd/es/transfer/search';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router';
 const TayorMaxsultolar = () => {
+    
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [tayorMaxsulot, setTayorMaxsulotlar] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -14,6 +16,7 @@ const TayorMaxsultolar = () => {
     const [selectedId, setSelectedId] = useState(null);
     const [searchLoading, setSearchLoading] = useState(false);
     const [maxsulotNomi, setMaxsulotNomi] = useState("");
+    const navigate = useNavigate();
 
     const setTayorMaxsulot = () => {
         setLoading(true);
@@ -205,6 +208,15 @@ const TayorMaxsultolar = () => {
                     rowKey="id"
                     bordered
                     loading={loading}
+                    onRow={(row)=>({
+                        onClick:()=>
+                            navigate(`/maxsulotmalumotlari/${row.id}`,{
+                                state:{
+                                    conserveType:row.conserveType,
+                                    quantity:row.readyConserves?.[0]?.quantity || "0"
+                                },
+                            }),
+                    })}
                 />
             )}
             <Modal

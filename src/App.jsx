@@ -17,6 +17,7 @@ import Shopcard from "./components/shop-card/Shopcard";
 import History from "./components/Maxsulot-tarxi/History";
 import HodimlarGet from "./components/hodimlar/HodimlarGet";
 import AttendaceTable from "./components/hodimlar/AttendaceTable";
+import TayorMaxsulotMalumoti from "./components/Maxsulot-Malumoti/TayorMasulotMalumoti";
 
 // 🔒 ProtectedRoute komponenti
 function ProtectedRoute() {
@@ -49,6 +50,7 @@ function App() {
             <Route index element ={<HodimlarGet/>}/>
             <Route path="attendance" element={<AttendaceTable/>}/>
             <Route path="tayormaxsulotlar" element={<TayorMaxsultolar />} />
+            <Route path="/maxsulotmalumotlari/:id" element={<TayorMaxsulotMalumoti/>}/>
           </Route>
         </Route>
 
