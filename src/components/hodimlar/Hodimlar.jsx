@@ -1,7 +1,12 @@
-import React from 'react'
+import React from "react";
+import { Outlet } from "react-router-dom";
 
-export default function Hodimlar() {
+const Hodimlar = () => {
   return (
-    <div>Hodimlar</div>
-  )
-}
+    <>
+      <Outlet />
+    </>
+  );
+};
+
+export default Hodimlar;
