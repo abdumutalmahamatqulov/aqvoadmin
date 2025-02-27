@@ -1,0 +1,1 @@
+export { OmborInner } from "./OmborInner";
