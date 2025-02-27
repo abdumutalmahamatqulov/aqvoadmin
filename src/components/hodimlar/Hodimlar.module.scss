@@ -1,0 +1,43 @@
+.employes {
+  padding: 1.2rem;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: bold;
+  }
+}
+
+.btnBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inpBox {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  label {
+    font-weight: bold;
+  }
+}
+
+.attendanceBox {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.attendance {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
