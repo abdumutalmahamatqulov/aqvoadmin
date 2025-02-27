@@ -1,4 +1,4 @@
-import { Button, Card, Col, Empty, Row, Space, Table } from "antd";
+import { Button, Card, Col, Empty, Input, Modal, Row, Space, Table } from "antd";
 import axios from "axios";
 import { BACKEND_URL } from "../../Common/Constants";
 import { useEffect, useState } from "react";
@@ -10,9 +10,26 @@ const TayorMaxsulotMalumoti = () => {
     const navigateData = location.state || {};
     const [loading, setLoading] = useState(true);
     const [products, setProducts] = useState([]);
+    const [confirmLoading, setConfirmLoading] = useState(false);
+    const [modalText, setModalText] = useState("Modal tarkibi");
     const { id } = useParams()
-    console.log("product=>", products);
-    console.log(id);
+    const [open, setOpen] = useState(false);
+
+    const showModal = () => {
+        setOpen(true);
+    };
+    const handleCancel = () => {
+        setOpen(false);
+    };
+
+    const handleOk = () => {
+        setModalText("Yuklanmoqda...");
+        setConfirmLoading(true);
+        setTimeout(() => {
+            setOpen(false);
+            setConfirmLoading(false);
+        }, 2000);
+    }
 
     useEffect(() => {
 
@@ -62,7 +79,7 @@ const TayorMaxsulotMalumoti = () => {
                         <Button type="primary" onClick={() => navigate(`/maxsulotmalumotlari/${id}`)}>
                             Mahsulot tarixini ko‘rish
                         </Button>
-                        <Button type="primary" onClick={() => navigate(`/maxsulotmalumotlari/${id}`)}>
+                        <Button type="primary" onClick={showModal}>
                             Mahsulotni tayyorlashda qo'shiladigan mahsulotlar
                         </Button>
                         <Button type="primary">
@@ -88,6 +105,21 @@ const TayorMaxsulotMalumoti = () => {
                     locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
                 />
             </Card>
+            {/* Modal */}
+            <Modal
+                title="Maxsulotni taxrirlash"
+                open={open}
+                onOk={handleOk}
+                confirmLoading={confirmLoading}
+                onCancel={handleCancel}
+            >
+                <div className="space-y-4">
+                    <div>
+                        <label htmlFor=""></label>
+                        <Input />
+                    </div>
+                </div>
+            </Modal>
         </div >
     )
 }

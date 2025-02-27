@@ -116,7 +116,7 @@ const TayorMaxsultolar = () => {
             })
             .then(() => {
                 message.success("Maxsulot muvaffaqiyatli o‘chirildi!");
-                setTayorMaxsulot();
+                setTayorMaxsulot(prev=>prev.filter(item=>item.id !== item.id));
             })
             .catch(() => message.error("O‘chirishda xatolik yuz berdi!"));
     };
