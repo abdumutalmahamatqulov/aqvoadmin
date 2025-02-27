@@ -22,7 +22,6 @@ import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const { Search } = Input;
-
 const Magazinlar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [magazinNomi, setMagazinNomi] = useState("");
@@ -32,11 +31,11 @@ const Magazinlar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [searchLoading, setSearchLoading] = useState(false); // Qidiruv uchun loading
+  const [searchLoading, setSearchLoading] = useState(false);
   const navigate = useNavigate();
 
   // Ma'lumotlarni olish
-  console.log("data dan kelayotgan malumot" , data);
+  console.log("data dan kelayotgan malumot", data);
   const fetchData = () => {
     setLoading(true);
     const token = localStorage.getItem("token");
@@ -61,12 +60,9 @@ const Magazinlar = () => {
             name: item.name,
             address: item.address,
             phone: item.phone,
-            
-
-
           }))
         );
-      // console.log(res?.data?.storeItems);
+        // console.log(res?.data?.storeItems);
       })
       .catch(() => message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!"))
       .finally(() => setLoading(false));
@@ -97,7 +93,6 @@ const Magazinlar = () => {
     }
   };
 
-  // Modalni yopish
   const handleCancel = () => setIsModalOpen(false);
 
   const handleOk = () => {
@@ -118,18 +113,14 @@ const Magazinlar = () => {
           },
         })
         .then((res) => {
-          console.log("Server javobi:", res.data);
-          message.success("Ma’lumot muvaffaqiyatli tahrirlandi!");
-          fetchData();
-          setIsModalOpen(false);
+          console.log("Serverdan kelgan javob:", res.data); // ✅ Server javobini tekshirish
         })
         .catch((error) => {
-          console.error("Xatolik tafsilotlari:", error.response?.data || error.message);
-          message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!");
-          console.log("Ma’lumotlar (data):", data);
-
+          console.error(
+            "PUT so‘rov xatosi:",
+            error.response?.data || error.message
+          );
         });
-        
     } else {
       axios
         .post(`${BACKEND_URL}/Stores`, storeData, {
@@ -266,7 +257,10 @@ const Magazinlar = () => {
       {/* Modal */}
       <Modal
         title={selectedId ? "Magazinni tahrirlash" : "Magazin qo‘shish"}
-        open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
         <div className="space-y-4">
           <div>
             <label>Magazin nomi</label>

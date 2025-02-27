@@ -57,14 +57,13 @@ const Shopcard = () => {
   useEffect(() => {
     if (!navigateData.name) {
       axios
-        .get(`${BACKEND_URL}/store-item/${id}`)
+        .get(`${BACKEND_URL}Store${id}`)
         .then((res) => setMagazin(res.data))
         .catch((err) => console.error("Xatolik yuz berdi!", err));
     }
   }, [id, navigateData]);
 
   useEffect(() => {
-    // Tashkilot ma’lumotlarini olish
     axios
       .get(`${BACKEND_URL}/store-item/${id}`)
       .then((res) => {
@@ -228,4 +227,5 @@ const Shopcard = () => {
     </div>
   );
 };
+
 export default Shopcard;
