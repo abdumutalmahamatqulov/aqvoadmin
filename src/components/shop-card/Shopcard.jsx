@@ -31,7 +31,6 @@ const Shopcard = () => {
   const [shopcard, setShop] = useState(navigateData);
   const [magazin, setMagazin] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState(magazin);
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [modalText, setModalText] = useState("Modal tarkibi");
@@ -88,7 +87,7 @@ console.log("Shop Card=>",shopcard);
       .get(`${BACKEND_URL}/Stores/${id}`)
       .then((res) => {
         if (res.data) {
-          setProducts(res.data);
+          setMagazin(res.data);
         }
       })
       .catch((err) => console.error("Mahsulotlarni yuklashda xatolik:", err));
@@ -144,7 +143,7 @@ console.log("Shop Card=>",shopcard);
           </Col>
         </Row>
       </Card>
-
+ 
       {/* Modal */}
       <Modal
         title="Mahsulot qo‘shish"
@@ -184,25 +183,19 @@ console.log("Shop Card=>",shopcard);
       <Card>
         <Table
           columns={[
-            { title: "№", dataIndex: "key", key: "key" },
+            { title: "№", dataIndex: "id", key: "id" },
             { title: "Mahsulot nomi", dataIndex: "conserveType", key: "conserveType" },
             { title: "Soni", dataIndex: "quantity", key: "quantity" },
             { title: "Narxi (so‘m)", dataIndex: "price", key: "price" },
-            {
-              title: "Qabul qilingan to‘lov (so‘m)",
-              dataIndex: "paid",
-              key: "paid",
+            {title: "Qabul qilingan to‘lov (so‘m)", dataIndex: "paid", key: "paid",
             },
             { title: "Jami (so‘m)", dataIndex: "total", key: "total" },
-            {
-              title: "Topshirilgan vaqti",
-              dataIndex: "lastUpdatedAt",
-              key: "lastUpdatedAt",
+            { title: "Topshirilgan vaqti", dataIndex: "lastUpdatedAt", key: "lastUpdatedAt",
             },
           ]}
-          dataSource={products.map((item, index) => ({
-            key: index + 1,
-            name: item.conserveType,
+          dataSource={data.map((item, index) => ({
+            id: index + 1,
+            conserveType: item.conserveType,
             quantity: item.quantity,
             price: item.price,
             paid: item.paid,
@@ -219,11 +212,11 @@ console.log("Shop Card=>",shopcard);
       <Card>
         <Table
           columns={[
-            { title: "№", dataIndex: "key", key: "key" },
+            { title: "№", dataIndex: "id", key: "id" },
             {
               title: "To‘lov summasi (so‘m)",
-              dataIndex: "amount",
-              key: "amount",
+              dataIndex: "allTotalPrices",
+              key: "allTotalPrices",
             },
             { title: "To‘lov vaqti", dataIndex: "paidAt", key: "paidAt" },
           ]}
