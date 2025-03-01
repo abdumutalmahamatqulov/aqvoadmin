@@ -1,29 +1,39 @@
-import { Button, Card, Col, Empty, Input, Modal, Row, Space, Table } from "antd";
+import { Button, Card, Col, Empty, Form, Input, Modal, Row, Select, Space, Table } from "antd";
 import axios from "axios";
 import { BACKEND_URL } from "../../Common/Constants";
 import { useEffect, useState } from "react";
-import { LeftOutlined } from "@ant-design/icons";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { DeleteOutlined, LeftOutlined } from "@ant-design/icons";
+import { Link, useParams } from "react-router-dom";
 
 const TayorMaxsulotMalumoti = () => {
-    const location = useLocation();
-    const navigateData = location.state || {};
     const [loading, setLoading] = useState(true);
+    const [form] = Form.useForm();
     const [products, setProducts] = useState([]);
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const [modalText, setModalText] = useState("Modal tarkibi");
-    const { id } = useParams()
+    const [selectedProducts, setSelectedProducts] = useState([{ id: Date.now(), type: "", value: "" },]);
+    const { id } = useParams();
+    const { Option } = Select;
     const [open, setOpen] = useState(false);
 
-    const showModal = () => {
-        setOpen(true);
+    const showModal = () => setOpen(true);
+    const handleCancel = () => setOpen(false);
+
+    const addProduct = () => {
+        setSelectedProducts([...selectedProducts, { id: Date.now(), type: "", value: "" }]);
     };
-    const handleCancel = () => {
-        setOpen(false);
+    const removeProduct = (id) => {
+        setSelectedProducts(selectedProducts.filter((item) => item.id !== id));
+    };
+    const updateProduct = (id, field, value) => {
+        setSelectedProducts(
+            selectedProducts.map((item) =>
+                item.id === id ? { ...item, [field]: value } : item
+            )
+        );
     };
 
     const handleOk = () => {
-        setModalText("Yuklanmoqda...");
+        // setModalText("Yuklanmoqda...");
         setConfirmLoading(true);
         setTimeout(() => {
             setOpen(false);
@@ -49,7 +59,7 @@ const TayorMaxsulotMalumoti = () => {
             })
             .catch((err) => console.error(err))
             .finally(() => setLoading(false));
-    }, [id, navigateData]);
+    }, [id]);
     const columns = [
         { title: "№", dataIndex: "id", key: "id", width: 50 },
         { title: "Mahsulot nomi", dataIndex: "conserveType", key: "conserveType " },
@@ -112,13 +122,75 @@ const TayorMaxsulotMalumoti = () => {
                 onOk={handleOk}
                 confirmLoading={confirmLoading}
                 onCancel={handleCancel}
+                footer={[
+                    <Button key='save' type="primary" onClick={handleOk}>
+                        Saqlash
+                    </Button>,
+                ]}
             >
-                <div className="space-y-4">
-                    <div>
-                        <label htmlFor=""></label>
-                        <Input />
-                    </div>
-                </div>
+                <Form form={form} layout="vertical">
+                    {selectedProducts?.map((product, index) => (
+                        <Space key={product.id} style={{ display: "flex", marginBottom: 8 }} align="start">
+                            {/* Mahsulot turini tanlash */}
+                            <Form.Item
+                                style={{ width: 200 }}
+                                name={`type-${product.id}`}
+                                rules={[{ required: true, message: "Miqdor turi maydoni talab qilinadi" }]}
+                            >
+                                <Select
+                                    placeholder="Mahsulot turini tanlang"
+                                    style={{ width: 200 }}
+                                    value={product.type}
+                                    onChange={(value) => updateProduct(product.id, "type", value)}
+                                >
+
+                                    {products?.map(item => (
+
+                                        <Select.Option key={item.id} value={item.productName}>
+                                            {item.productName}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+
+                            {/* Qiymat kiritish */}
+                            <Form.Item
+                                style={{ width: 150 }}
+                                name={`value-${product.id}`}
+                                rules={[{ required: true, message: "Mahsulot miqdori maydoni talab qilinadi" }]}
+                            >
+
+                                <Input
+                                    placeholder="Masalan, 200"
+                                    type="number"
+                                    value={product.value}
+                                    onChange={(e) => updateProduct(product.id, "value", e.target.value)}
+                                />
+                            </Form.Item>
+
+                            {/* O‘chirish tugmasi */}
+                            <Button
+                                type="text"
+                                icon={<DeleteOutlined style={{ fontSize: "15px", color: "red" }} />}
+                                onClick={() => removeProduct(product.id)}
+                                style={{
+                                    borderColor: "red",
+                                    borderWidth: "1px",
+                                    width: "50px",
+                                    height: "36px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                }}
+                            />
+                        </Space>
+                    ))}
+
+                    {/* Qo‘shish tugmasi */}
+                    <Button type="dashed" block onClick={addProduct}>
+                        + Qo‘shish
+                    </Button>
+                </Form>
             </Modal>
         </div >
     )
