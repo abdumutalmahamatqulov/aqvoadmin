@@ -46,28 +46,25 @@ const Magazinlar = () => {
     }
 
     axios
-    .get(`${BACKEND_URL}/Stores`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    .then((res) => {
-      console.log("API response:", res);
-      const apiData = Array.isArray(res.data) ? res.data : res.data.data || [];
-      setData(
-        apiData.map((item, index) => ({
-          key: index + 1,
-          id: item.id,
-          name: item.name,
-          address: item.address,
-          phone: item.phone,
-        }))
-      );
-    })
-    .catch((err) => {
-      console.error("API xatosi:", err.response?.data || err.message);
-      message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!");
-    })
-    .finally(() => setLoading(false));
-  
+      .get(`${BACKEND_URL}/Stores`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        const apiData = Array.isArray(res.data)
+          ? res.data
+          : res.data.data || [];
+        setData(
+          apiData.map((item, index) => ({
+            key: index + 1,
+            id: item.id,
+            name: item.name,
+            address: item.address,
+            phone: item.phone,
+          }))
+        );
+      })
+      .catch(() => message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!"))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -102,12 +99,14 @@ const Magazinlar = () => {
       toast.error("Token topilmadi!");
       return;
     }
-
+  
     const storeData = { name: magazinNomi, address: manzil, phone };
-
+    console.log("Yuborilayotgan ma'lumot:", storeData);
+  
     if (selectedId !== null) {
+      // Tahrirlash
       axios
-        .put(`${BACKEND_URL}/Stores/${selectedId}`, storeData, {
+        .put(`${BACKEND_URL}/stores/${selectedId}`, storeData, { // Endpointni toʻgʻri oʻrnating
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -115,29 +114,33 @@ const Magazinlar = () => {
         })
         .then((res) => {
           console.log("Serverdan kelgan javob:", res.data);
-          message.success("Mufaqiyatli ozgartrildi");
+          message.success("Muvaffaqiyatli oʻzgartirildi");
+          fetchData(); // Ma'lumotlarni yangilash
+          setIsModalOpen(false); // Modalni yopish
         })
         .catch((error) => {
+          console.error("Xatolik:", error.response?.data || error.message);
           message.error("Xatolik yuz berdi");
-          console.error(
-            "PUT so‘rov xatosi:",
-            error.response?.data || error.message
-          );
+          console.log(selectedId);
         });
     } else {
+      // Yangi qoʻshish
       axios
-        .post(`${BACKEND_URL}/Stores`, storeData, {
+        .post(`${BACKEND_URL}/api/stores`, storeData, { // Endpointni toʻgʻri oʻrnating
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         })
         .then(() => {
-          message.success("Magazin muvaffaqiyatli qo‘shildi!");
-          fetchData();
-          setIsModalOpen(false);
+          message.success("Magazin muvaffaqiyatli qoʻshildi!");
+          fetchData(); // Ma'lumotlarni yangilash
+          setIsModalOpen(false); // Modalni yopish
         })
-        .catch(() => message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!"));
+        .catch((error) => {
+          console.error("Xatolik:", error.response?.data || error.message);
+          message.error("Xatolik yuz berdi");
+        });
     }
   };
 
@@ -252,7 +255,8 @@ const Magazinlar = () => {
                   name: record.name,
                   phone: record.phone,
                   address: record.address,
-                  storeItems: record.storeItems?.[0]?.price,
+                  // storeItems ni to'g'ri uzatish
+                  storeItems: record.storeItems || [], // Agar storeItems bo'lmasa, bo'sh massiv
                 },
               }),
           })}

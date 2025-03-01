@@ -15,9 +15,9 @@ import {
   Modal,
   Input,
   Empty,
+  message,
 } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
-// import PhoneInput from "react-phone-input-2";
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -26,7 +26,7 @@ const Shopcard = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigateData = location.state || {};
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
   const [data, setData] = useState([]);
   const [shopcard, setShop] = useState(navigateData);
   const [magazin, setMagazin] = useState([]);
@@ -35,63 +35,75 @@ const Shopcard = () => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [modalText, setModalText] = useState("Modal tarkibi");
   const navigate = useNavigate();
-  // console.log(navigate);
+
+  const [productType, setProductType] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [price, setPrice] = useState("");
+  const [paid, setPaid] = useState("");
+  const [deliveryTime, setDeliveryTime] = useState("");
+
   const showModal = () => {
     setOpen(true);
   };
-  console.log("magazin=>",magazin);
-console.log("Shop Card=>",shopcard);
-  // Modalni yopish funksiyasi
+
   const handleCancel = () => {
     setOpen(false);
   };
 
-  // Modalni tasdiqlash funksiyasi
-  const handleOk = () => {
+  const handleOk = async () => {
     setModalText("Yuklnamoqda ....");
     setConfirmLoading(true);
-    setTimeout(() => {
+
+    try {
+      const response = await axios.post(
+        `${BACKEND_URL}/store-item`,
+        {
+          storeId: id,
+          conserveType: productType,
+          quantity: quantity,
+          price: price,
+          paid: paid,
+          deliveredAt: deliveryTime,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log("Serverdan kelgan javob:", response.data);
+      message.success("Mahsulot muvaffaqiyatli qoʻshildi!");
       setOpen(false);
+      fetchData(); // Ma'lumotlarni yangilash
+    } catch (err) {
+      console.error("Xatolik yuz berdi!", err.response?.data || err.message);
+      message.error("Xatolik yuz berdi!");
+    } finally {
       setConfirmLoading(false);
-    }, 2000);
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const storeItemsResponse = await axios.get(`${BACKEND_URL}/store-item/store/${id}?page=1&limit=10`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("Store Items API Response:", storeItemsResponse.data);
+      setMagazin(storeItemsResponse.data.data);
+
+      const storeResponse = await axios.get(`${BACKEND_URL}/Stores/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("Store API Response:", storeResponse.data);
+      setShop(storeResponse.data);
+    } catch (err) {
+      console.error("Xatolik yuz berdi!", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    // if (!navigateData.name) {
-      axios
-        .get(`${BACKEND_URL}/store-item/store/${id}?page=1&limit=10` , {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((res) => {
-          console.log(res.data.data);
-          setMagazin(res.data.data)
-        })
-        .catch((err) => console.error("Xatolik yuz berdi!", err));
-    // }
-  }, [id, navigateData]);
-
-
-  useEffect(() => {
-    axios
-      .get(`${BACKEND_URL}/store-item/${id}`)
-      .then((res) => {
-        console.log("Magazin API javobi:", res.data);
-        if (res.data) {
-          setMagazin(res.data);
-        }
-      })
-      .catch((err) => console.error("Xatolik yuz berdi!", err))
-      .finally(() => setLoading(false));
-
-    axios
-      .get(`${BACKEND_URL}/Stores/${id}`)
-      .then((res) => {
-        if (res.data) {
-          setMagazin(res.data);
-        }
-      })
-      .catch((err) => console.error("Mahsulotlarni yuklashda xatolik:", err));
-  }, [id]);
+    fetchData();
+  }, [id, token]);
 
   if (loading) {
     return (
@@ -127,7 +139,6 @@ console.log("Shop Card=>",shopcard);
           <Col span={12} style={{ textAlign: "right" }}>
             <Space direction="vertical" size="small">
               <RangePicker />
-              
               <Title level={5}>Jami: {magazin?.allTotalPrices || "0"}</Title>
               <Title level={5}>To'langan: {magazin?.totalPaidAmount || "0"}</Title>
               <Title level={5}>Qarzdorlik: {magazin?.totalDebt || "0"}</Title>
@@ -143,7 +154,7 @@ console.log("Shop Card=>",shopcard);
           </Col>
         </Row>
       </Card>
- 
+
       {/* Modal */}
       <Modal
         title="Mahsulot qo‘shish"
@@ -155,23 +166,23 @@ console.log("Shop Card=>",shopcard);
         <div className="space-y-4">
           <div>
             <label>Mahsulot turi</label>
-            <Input />
+            <Input value={productType} onChange={(e) => setProductType(e.target.value)} />
           </div>
           <div>
             <label>Mahsulot soni</label>
-            <Input />
+            <Input value={quantity} onChange={(e) => setQuantity(e.target.value)} />
           </div>
           <div>
             <label>Narxi</label>
-            <Input />
+            <Input value={price} onChange={(e) => setPrice(e.target.value)} />
           </div>
           <div>
             <label>Qabul qilingan to'lov</label>
-            <Input />
+            <Input value={paid} onChange={(e) => setPaid(e.target.value)} />
           </div>
           <div>
             <label>Topshirish vaqtini tanlang</label>
-            <Input />
+            <Input value={deliveryTime} onChange={(e) => setDeliveryTime(e.target.value)} />
           </div>
         </div>
       </Modal>
@@ -187,13 +198,11 @@ console.log("Shop Card=>",shopcard);
             { title: "Mahsulot nomi", dataIndex: "conserveType", key: "conserveType" },
             { title: "Soni", dataIndex: "quantity", key: "quantity" },
             { title: "Narxi (so‘m)", dataIndex: "price", key: "price" },
-            {title: "Qabul qilingan to‘lov (so‘m)", dataIndex: "paid", key: "paid",
-            },
+            { title: "Qabul qilingan to‘lov (so‘m)", dataIndex: "paid", key: "paid" },
             { title: "Jami (so‘m)", dataIndex: "total", key: "total" },
-            { title: "Topshirilgan vaqti", dataIndex: "lastUpdatedAt", key: "lastUpdatedAt",
-            },
+            { title: "Topshirilgan vaqti", dataIndex: "deliveredAt", key: "deliveredAt" },
           ]}
-          dataSource={data.map((item, index) => ({
+          dataSource={Array.isArray(magazin) ? magazin.map((item, index) => ({
             id: index + 1,
             conserveType: item.conserveType,
             quantity: item.quantity,
@@ -201,7 +210,7 @@ console.log("Shop Card=>",shopcard);
             paid: item.paid,
             total: item.total,
             deliveredAt: item.deliveredAt,
-          }))}
+          })) : []}
           pagination={false}
           locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
         />
@@ -213,11 +222,7 @@ console.log("Shop Card=>",shopcard);
         <Table
           columns={[
             { title: "№", dataIndex: "id", key: "id" },
-            {
-              title: "To‘lov summasi (so‘m)",
-              dataIndex: "allTotalPrices",
-              key: "allTotalPrices",
-            },
+            { title: "To‘lov summasi (so‘m)", dataIndex: "allTotalPrices", key: "allTotalPrices" },
             { title: "To‘lov vaqti", dataIndex: "paidAt", key: "paidAt" },
           ]}
           dataSource={[]} // Hozircha bo'sh
