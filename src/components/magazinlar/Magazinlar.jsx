@@ -46,25 +46,28 @@ const Magazinlar = () => {
     }
 
     axios
-      .get(`${BACKEND_URL}/Stores`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        const apiData = Array.isArray(res.data)
-          ? res.data
-          : res.data.data || [];
-        setData(
-          apiData.map((item, index) => ({
-            key: index + 1,
-            id: item.id,
-            name: item.name,
-            address: item.address,
-            phone: item.phone,
-          }))
-        );
-      })
-      .catch(() => message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!"))
-      .finally(() => setLoading(false));
+    .get(`${BACKEND_URL}/Stores`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((res) => {
+      console.log("API response:", res);
+      const apiData = Array.isArray(res.data) ? res.data : res.data.data || [];
+      setData(
+        apiData.map((item, index) => ({
+          key: index + 1,
+          id: item.id,
+          name: item.name,
+          address: item.address,
+          phone: item.phone,
+        }))
+      );
+    })
+    .catch((err) => {
+      console.error("API xatosi:", err.response?.data || err.message);
+      message.error("Xatolik yuz berdi. Qayta urinib ko‘ring!");
+    })
+    .finally(() => setLoading(false));
+  
   };
 
   useEffect(() => {
