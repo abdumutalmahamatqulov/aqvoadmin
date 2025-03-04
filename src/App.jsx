@@ -1,9 +1,4 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import LoginPage from "./pages/LoginPage";
 import Statistika from "./components/statistika/Statistika";
@@ -23,7 +18,9 @@ function ProtectedRoute() {
 }
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("token")
+  );
 
   useEffect(() => {
     const checkAuth = () => setIsAuthenticated(!!localStorage.getItem("token"));
@@ -34,15 +31,20 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} />
+        <Route
+          path="/login"
+          element={
+            isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />
+          }
+        />
 
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Layout />}>
             <Route path="statistika" element={<Statistika />} />
             <Route path="ombor" element={<Ombor />} />
             <Route path="magazinlar" element={<Magazinlar />} />
-            <Route path="/magazin/:id" element={<Shopcard/>} />
-            <Route path="/shop/:id" element={<History/>} />
+            <Route path="/magazin/:id" element={<Shopcard />} />
+            <Route path="/shop/:id" element={<History />} />
             <Route path="hodimlar" element={<Hodimlar />} />
             <Route path="tayormaxsulotlar" element={<TayorMaxsultolar />} />
           </Route>

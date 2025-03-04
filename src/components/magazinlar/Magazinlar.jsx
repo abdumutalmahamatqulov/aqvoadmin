@@ -99,14 +99,15 @@ const Magazinlar = () => {
       toast.error("Token topilmadi!");
       return;
     }
-  
+
     const storeData = { name: magazinNomi, address: manzil, phone };
     console.log("Yuborilayotgan ma'lumot:", storeData);
-  
+
     if (selectedId !== null) {
       // Tahrirlash
       axios
-        .put(`${BACKEND_URL}/stores/${selectedId}`, storeData, { // Endpointni toʻgʻri oʻrnating
+        .put(`${BACKEND_URL}/stores/${selectedId}`, storeData, {
+          // Endpointni toʻgʻri oʻrnating
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -126,7 +127,8 @@ const Magazinlar = () => {
     } else {
       // Yangi qoʻshish
       axios
-        .post(`${BACKEND_URL}/api/stores`, storeData, { // Endpointni toʻgʻri oʻrnating
+        .post(`${BACKEND_URL}/api/stores`, storeData, {
+          // Endpointni toʻgʻri oʻrnating
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
